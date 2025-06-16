@@ -2,5 +2,16 @@ services:
   - type: web
     name: hospital-management-system
     env: python
-    buildCommand: ""
-    startCommand: "python app.py"
+    buildCommand: "pip install -r requirements.txt"
+    startCommand: "gunicorn app:app"
+    envVars:
+      - key: MYSQLHOST
+        value: mysql.railway.internal
+      - key: MYSQLUSER
+        value: root
+      - key: MYSQLPASSWORD
+        value: UMuXNmnIAbQYakQHRFfiIyDtXRTuYkTF
+      - key: MYSQLDATABASE
+        value: railway
+      - key: MYSQLPORT
+        value: "3306"
