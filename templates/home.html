@@ -1,22 +1,24 @@
+<!-- templates/home.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Hospital Management System - Home</title>
+    <title>Home - Hospital Management System</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body class="bg-light">
     <div class="container mt-5">
-        <h2 class="text-center mb-4">Hospital Management System - Home</h2>
-        <div class="d-flex justify-content-center flex-column align-items-center">
-            <a href="{{ url_for('add_patient') }}" class="btn btn-primary btn-lg mb-3 w-50">Add Patient</a>
-            <a href="{{ url_for('view_patient') }}" class="btn btn-success btn-lg mb-3 w-50">View Patients</a>
-            <a href="{{ url_for('update_patient') }}" class="btn btn-warning btn-lg mb-3 w-50">Update Patient</a>
-            <a href="{{ url_for('delete_patient') }}" class="btn btn-danger btn-lg mb-3 w-50">Delete Patient</a>
-            <a href="{{ url_for('search_patient') }}" class="btn btn-info btn-lg mb-3 w-50">Search Patient</a>
-            <a href="{{ url_for('logout') }}" class="btn btn-secondary btn-lg w-50">Logout</a>
+        <h2 class="text-center mb-4">Welcome to Hospital Management System</h2>
+        <div class="d-flex flex-column align-items-center">
+            <a href="/add" class="btn btn-success mb-2 w-50">Add Patient</a>
+            <a href="/view" class="btn btn-primary mb-2 w-50">View Patients</a>
+            <a href="/update" class="btn btn-warning mb-2 w-50">Update Patient</a>
+            <a href="/delete" class="btn btn-danger mb-2 w-50">Delete Patient</a>
+            <a href="/search" class="btn btn-info mb-2 w-50">Search Patient</a>
+            <a href="/logout" class="btn btn-secondary w-50">Logout</a>
         </div>
     </div>
 </body>
 </html>
+
 
