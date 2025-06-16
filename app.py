@@ -1,115 +1,129 @@
-from flask import Flask, render_template, request, redirect, url_for
 import mysql.connector
+from flask import Flask, render_template, request, redirect, url_for, session, flash
 
 app = Flask(__name__)
+app.secret_key = 'your_secret_key_here'
 
-# MySQL connection configuration for FreeSQLDatabase.com
+# ✅ Final InfinityFree MySQL Database Config:
 db = mysql.connector.connect(
-    host="sql12.freesqldatabase.com",
-    user="sql12785004",
-    password="qPXgYMu5h6",  # Your actual DB password
-    database="sql12785004",
-    port=3306
+    host="sql301.infinityfree.com",
+    user="if0_39243875",
+    password="0409Ashmeet",
+    database="if0_39243875_snhHospital"
 )
 
 cursor = db.cursor()
 
 @app.route('/')
-def index():
+def home():
     return redirect(url_for('login'))
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
-        username = request.form['username']
-        password = request.form['password']
-        if username == "SNH_ASHMEET" and password == "0409Ashmeet*":
-            return redirect(url_for('home'))
+        if request.form['username'] == 'SNH_ASHMEET' and request.form['password'] == '0409Ashmeet*':
+            session['username'] = request.form['username']
+            return redirect(url_for('dashboard'))
         else:
-            return render_template('login.html', error="Invalid Credentials")
+            flash('Invalid Credentials. Please try again.')
+            return redirect(url_for('login'))
     return render_template('login.html')
 
-@app.route('/home')
-def home():
-    return render_template('home.html')
+@app.route('/dashboard')
+def dashboard():
+    if 'username' in session:
+        return render_template('dashboard.html')
+    else:
+        return redirect(url_for('login'))
 
 @app.route('/add', methods=['GET', 'POST'])
-def add_patient():
-    if request.method == 'POST':
-        pid = request.form['pid']
-        name = request.form['name']
-        age = request.form['age']
-        disease = request.form['disease']
-        doctor = request.form['doctor']
-        fee = request.form['fee']
-        
-        query = "INSERT INTO PATIENT_DB (P_id, P_name, age, Disease, Doc_Incharge, fee) VALUES (%s, %s, %s, %s, %s, %s)"
-        values = (pid, name, age, disease, doctor, fee)
-        
-        cursor.execute(query, values)
-        db.commit()
-        
-        return redirect(url_for('home'))
-    return render_template('add.html')
+def add():
+    if 'username' in session:
+        if request.method == 'POST':
+            id = request.form['id']
+            name = request.form['name']
+            age = request.form['age']
+            disease = request.form['disease']
+            doctor = request.form['doctor']
+            fee = request.form['fee']
+
+            sql = "INSERT INTO PATIENT_DB (P_id, P_name, age, Disease, Doc_Incharge, fee) VALUES (%s, %s, %s, %s, %s, %s)"
+            val = (id, name, age, disease, doctor, fee)
+            cursor.execute(sql, val)
+            db.commit()
+            flash('Patient added successfully.')
+            return redirect(url_for('dashboard'))
+        return render_template('add.html')
+    else:
+        return redirect(url_for('login'))
 
 @app.route('/view')
-def view_patients():
-    cursor.execute("SELECT * FROM PATIENT_DB")
-    data = cursor.fetchall()
-    return render_template('view.html', patients=data)
+def view():
+    if 'username' in session:
+        cursor.execute("SELECT * FROM PATIENT_DB")
+        data = cursor.fetchall()
+        return render_template('view.html', data=data)
+    else:
+        return redirect(url_for('login'))
 
 @app.route('/update', methods=['GET', 'POST'])
-def update_patient():
-    if request.method == 'POST':
-        pid = request.form['pid']
-        name = request.form['name']
-        age = request.form['age']
-        disease = request.form['disease']
-        doctor = request.form['doctor']
-        fee = request.form['fee']
+def update():
+    if 'username' in session:
+        if request.method == 'POST':
+            id = request.form['id']
+            name = request.form['name']
+            age = request.form['age']
+            disease = request.form['disease']
+            doctor = request.form['doctor']
+            fee = request.form['fee']
 
-        query = "UPDATE PATIENT_DB SET P_name=%s, age=%s, Disease=%s, Doc_Incharge=%s, fee=%s WHERE P_id=%s"
-        values = (name, age, disease, doctor, fee, pid)
-        
-        cursor.execute(query, values)
-        db.commit()
-        
-        return redirect(url_for('home'))
-    return render_template('update.html')
+            sql = "UPDATE PATIENT_DB SET P_name=%s, age=%s, Disease=%s, Doc_Incharge=%s, fee=%s WHERE P_id=%s"
+            val = (name, age, disease, doctor, fee, id)
+            cursor.execute(sql, val)
+            db.commit()
+            flash('Patient updated successfully.')
+            return redirect(url_for('dashboard'))
+        return render_template('update.html')
+    else:
+        return redirect(url_for('login'))
 
 @app.route('/delete', methods=['GET', 'POST'])
-def delete_patient():
-    if request.method == 'POST':
-        pid = request.form['pid']
-        
-        query = "DELETE FROM PATIENT_DB WHERE P_id=%s"
-        values = (pid,)
-        
-        cursor.execute(query, values)
-        db.commit()
-        
-        return redirect(url_for('home'))
-    return render_template('delete.html')
+def delete():
+    if 'username' in session:
+        if request.method == 'POST':
+            id = request.form['id']
+            sql = "DELETE FROM PATIENT_DB WHERE P_id=%s"
+            val = (id,)
+            cursor.execute(sql, val)
+            db.commit()
+            flash('Patient deleted successfully.')
+            return redirect(url_for('dashboard'))
+        return render_template('delete.html')
+    else:
+        return redirect(url_for('login'))
 
 @app.route('/search', methods=['GET', 'POST'])
-def search_patient():
-    if request.method == 'POST':
-        search_by = request.form['search_by']
-        search_value = request.form['search_value']
+def search():
+    if 'username' in session:
+        if request.method == 'POST':
+            search_by = request.form['search_by']
+            search_value = request.form['search_value']
+            if search_by == "id":
+                sql = "SELECT * FROM PATIENT_DB WHERE P_id=%s"
+            else:
+                sql = "SELECT * FROM PATIENT_DB WHERE P_name=%s"
+            val = (search_value,)
+            cursor.execute(sql, val)
+            data = cursor.fetchall()
+            return render_template('search.html', data=data)
+        return render_template('search.html', data=None)
+    else:
+        return redirect(url_for('login'))
 
-        if search_by == 'id':
-            query = "SELECT * FROM PATIENT_DB WHERE P_id=%s"
-        elif search_by == 'name':
-            query = "SELECT * FROM PATIENT_DB WHERE P_name=%s"
-        else:
-            return render_template('search.html', error="Invalid search criteria")
-        
-        values = (search_value,)
-        cursor.execute(query, values)
-        data = cursor.fetchall()
-        
-        return render_template('search.html', patients=data)
-    return render_template('search.html')
+@app.route('/logout')
+def logout():
+    session.pop('username', None)
+    return redirect(url_for('login'))
 
 if __name__ == '__main__':
     app.run(debug=True)
