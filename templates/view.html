@@ -1,40 +1,25 @@
-<!-- templates/view.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>View Patients - Hospital Management System</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <title>View Patients | Hospital Management</title>
 </head>
-<body class="bg-light">
-    <div class="container mt-5">
-        <h2 class="text-center mb-4">All Patients</h2>
-        {% if patients %}
-            <table class="table table-bordered table-striped shadow-sm">
-                <thead class="table-dark">
-                    <tr>
-                        <th>ID</th>
-                        <th>Name</th>
-                        <th>Age</th>
-                        <th>Disease</th>
-                        <th>Doctor Incharge</th>
-                        <th>Fee</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for patient in patients %}
-                    <tr>
-                        <td>{{ patient[0] }}</td>
-                        <td>{{ patient[1] }}</td>
-                        <td>{{ patient[2] }}</td>
-                        <td>{{ patient[3] }}</td>
-                        <td>{{ patient[4] }}</td>
-                        <td>{{ patient[5] }}</td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        {% else %}
-            <p class="text-center text-muted">No patient records found.</p>
-        {% endif %}
-        <div class="t
+<body>
+    <h2>Patient Records</h2>
+    <table border="1">
+        <tr>
+            <th>ID</th><th>Name</th><th>Age</th><th>Disease</th><th>Doctor</th><th>Fee</th>
+        </tr>
+        {% for row in patients %}
+        <tr>
+            <td>{{row[0]}}</td>
+            <td>{{row[1]}}</td>
+            <td>{{row[2]}}</td>
+            <td>{{row[3]}}</td>
+            <td>{{row[4]}}</td>
+            <td>{{row[5]}}</td>
+        </tr>
+        {% endfor %}
+    </table>
+</body>
+</html>
